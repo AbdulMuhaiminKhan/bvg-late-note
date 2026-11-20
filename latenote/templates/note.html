@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Late note: {{ n.line }} {{ hhmm(n.planned_when) }} · BVG Late Note{% endblock %}
 {% block content %}
-{% set m = minutes(n.max_delay_s if n.max_delay_s is not none else n.delay_s) %}
+{% set m = minutes(n.delay_s if n.delay_s is not none else n.max_delay_s) %}
 <article class="slip" aria-label="Late note">
   <header class="slip-head">
     <p class="slip-kind">Late note</p>

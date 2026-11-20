@@ -103,3 +103,18 @@ def test_late_message_wording():
     assert "0 minutes" not in on_time
     one = late_message({**base, "delay_s": 60, "max_delay_s": 60}, "L")
     assert "was 1 minute late" in one
+
+
+def test_note_stamp_matches_planned_and_left_times():
+    from datetime import datetime, timezone
+    from latenote.web import late_message
+
+    # The worst reading was 3 minutes, but the train finally left 2 minutes late.
+    note = {
+        "product": "bus", "line": "M41", "direction": "Sonnenallee/Baumschulenstr.",
+        "stop_name": "S Sonnenallee", "cancelled": False,
+        "planned_when": datetime(2026, 11, 20, 4, 19, tzinfo=timezone.utc),
+        "actual_when": datetime(2026, 11, 20, 4, 21, tzinfo=timezone.utc),
+        "delay_s": 120, "max_delay_s": 180,
+    }
+    assert "was 2 minutes late (planned 05:19, left 05:21" in late_message(note, "L")

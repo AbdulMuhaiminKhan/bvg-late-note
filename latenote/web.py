@@ -50,7 +50,7 @@ def late_message(note: dict, link: str) -> str:
     if note["cancelled"]:
         what = f"my {train} to {note['direction']} from {note['stop_name']} ({when}) was cancelled"
     else:
-        m = minutes(note["max_delay_s"] if note["max_delay_s"] is not None else note["delay_s"]) or 0
+        m = minutes(note["delay_s"] if note["delay_s"] is not None else note["max_delay_s"]) or 0
         trip = f"my {train} to {note['direction']} from {note['stop_name']}"
         if m <= 0:
             # Honest even when the train was on time: the note records it, it does not excuse it.
