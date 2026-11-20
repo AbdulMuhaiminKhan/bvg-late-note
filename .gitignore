@@ -19,3 +19,6 @@ __pycache__/
 # azure functions build output
 function_app/latenote/
 function_app/.python_packages/
+
+# infra: generated names
+infra/.names.env

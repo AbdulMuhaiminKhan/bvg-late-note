@@ -1,0 +1,9 @@
+#cloud-config
+# Runs once on the VM's first boot: installs Docker. No secrets in here,
+# because custom data can be read back from the VM.
+package_update: true
+packages:
+  - docker.io
+runcmd:
+  - systemctl enable --now docker
+  - usermod -aG docker azureuser

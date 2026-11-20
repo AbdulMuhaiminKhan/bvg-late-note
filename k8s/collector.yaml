@@ -1,0 +1,23 @@
+# Same job as the Azure Function: a CronJob every 2 minutes.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: latenote-collector
+spec:
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          restartPolicy: Never
+          securityContext: { runAsNonRoot: true, runAsUser: 10001 }
+          containers:
+            - name: collector
+              image: ghcr.io/abdulmuhaiminkhan/bvg-late-note:latest
+              command: ["python", "-m", "latenote.collector"]
+              envFrom: [{ secretRef: { name: latenote-db } }]
+              resources:
+                requests: { cpu: 50m, memory: 64Mi }
+                limits: { cpu: 250m, memory: 128Mi }
