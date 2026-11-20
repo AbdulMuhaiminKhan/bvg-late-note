@@ -11,7 +11,7 @@ before presenting.
 | Resource | Size | How it is billed | Free offer that covers it |
 |---|---|---|---|
 | Container App (web) | 0.25 vCPU, 0.5 GiB, 0 to 3 replicas | per vCPU-second and GiB-second while running | Container Apps monthly grant: 180,000 vCPU-s, 360,000 GiB-s, 2 million requests. Scales to zero when nobody visits. |
-| Container Apps job (collector) | 0.25 vCPU, 0.5 GiB, every 2 minutes, a few seconds per run | same | same grant: 21,600 runs × ~10 s × 0.25 vCPU ≈ 54,000 vCPU-s |
+| Container Apps job (collector) | 0.25 vCPU, 0.5 GiB, every 10 minutes, ~33 s per run billed (mostly container start) | same | same grant: 4,320 runs × 33 s × 0.25 vCPU ≈ 36,000 vCPU-s and ≈ 71,000 GiB-s a month, about 20 % of the grant. (Every 2 minutes would have been ≈ 178,000 vCPU-s, right at the limit.) |
 | Container Apps environment | Consumption, **no Log Analytics** (`--logs-destination none`) | free itself | n/a |
 | PostgreSQL Flexible Server | Burstable B1ms, 32 GB storage, 7-day backups | per hour, all month | 750 hours of B1ms + 32 GB storage + 32 GB backup |
 | Key Vault | Standard | per 10,000 operations | 10,000 transactions a month (we use a few hundred) |
@@ -19,7 +19,7 @@ before presenting.
 | MQTT broker | Eclipse Mosquitto in Docker on the VM | nothing extra | open source, runs on the free VM |
 | VNet, subnet, NSG | | free | always free |
 | Public IP | **none** | | The VM has no public IP on purpose: public IPs are not on a free offer. |
-| BVG API | | free | 2 collectors (job + MQTT sensor) × 7 stops × 21,600 runs = 302,400 calls/month, **7 per minute** of the allowed 100 |
+| BVG API | | free | MQTT sensor 7 stops × 21,600 runs + job 7 stops × 4,320 runs ≈ 181,000 calls/month, **about 4 per minute** of the allowed 100 |
 
 Not used, because they are outside the free tier: a storage account (needed by
 an Azure Function, so the collector runs as a Container Apps job instead), Log
@@ -55,7 +55,7 @@ the bill. Only the collector talks to BVG, and the database answers the users.
 
 1. A €10/month budget on the subscription with alerts at 50, 80 and 100 % (created before anything else).
 2. Everything in one resource group: `infra/99-cleanup.sh` deletes it all.
-3. Container Apps scales to zero; the collector job runs only a few seconds every 2 minutes.
+3. Container Apps scales to zero; the collector job runs every 10 minutes (the VM's MQTT sensor covers the 2-minute data), so it stays far inside the free grant even if left running.
 4. One VM only: 750 free hours cover it running all month. A second VM would not be free.
 5. No public IP, no Log Analytics, no storage account: the paid extras are left out on purpose.
 6. Old departures are deleted after 30 days (`RETENTION_DAYS`), so the database stays small.

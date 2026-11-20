@@ -44,8 +44,8 @@ and get a note with a link anyone can check.
 ![Architecture: phone to Container Apps and VM, both reading PostgreSQL; a scheduled Container Apps job writes BVG delays to PostgreSQL; on the VM a virtual sensor publishes over MQTT to Mosquitto and a subscriber stores the messages; Key Vault holds the secrets](docs/architecture.png)
 
 The design follows from one limit: the BVG API allows about **100 requests per
-minute**. So users never call BVG. A scheduled job calls it (7 stops every
-2 minutes, about 3.5 requests per minute) and stores everything in PostgreSQL.
+minute**. So users never call BVG. Scheduled collectors call it (7 stops every
+2 minutes from the VM's MQTT sensor, every 10 from a Container Apps job: about 4 requests per minute) and stores everything in PostgreSQL.
 The web app only reads that database, so 10 or 10,000 users put exactly the
 same load on BVG.
 
@@ -57,7 +57,7 @@ stop and planned time), so running both is safe.
 
 | Component | Service | Why this one |
 |---|---|---|
-| Collector | Azure Container Apps job, cron `*/2 * * * *` | Runs 30 times an hour for a few seconds. Billed per second of run time, not for an idle server. |
+| Collector | Azure Container Apps job, cron `*/10 * * * *` | Runs 6 times an hour for a few seconds (the VM's MQTT sensor adds 2-minute data), which keeps it far inside the free grant. Billed per second of run time, not for an idle server. |
 | Database | Azure Database for PostgreSQL, Flexible Server B1ms | Managed patches and backups. SQL makes "share of late trains per line" one query. |
 | Web app | FastAPI + Jinja2 in one Docker image | The same image runs on a laptop, the VM, Container Apps and Kubernetes. |
 | Hosting | Azure Container Apps | HTTPS out of the box, 0 to 3 replicas, rolling updates, no cluster to run or pay for. |
@@ -74,7 +74,7 @@ browser ──HTTPS──> ca-latenote.<id>.swedencentral.azurecontainerapps.io
         ──> Container Apps ingress (TLS, managed certificate, load balancing)
         ──> web container :8000 ──TLS──> PostgreSQL :5432
 
-collector job (every 2 min) ──HTTPS──> v6.bvg.transport.rest ;  ──TLS──> PostgreSQL
+collector job (every 10 min) ──HTTPS──> v6.bvg.transport.rest ;  ──TLS──> PostgreSQL
 
 on the VM:  sensor ──HTTPS──> BVG API
             sensor ──MQTT, login──> mosquitto:1883  (topic bvg/departures/<stop_id>)
@@ -148,7 +148,7 @@ bash infra/00-resource-group.sh          # resource group; asks you to set a bud
 bash infra/01-network-and-vm.sh          # VNet, NSG, private VM
 bash infra/02-database-and-keyvault.sh   # PostgreSQL + Key Vault
 bash infra/03-container-apps.sh          # the web app (HTTPS)
-bash infra/04-collector-job.sh           # the collector, every 2 minutes
+bash infra/04-collector-job.sh           # the collector, every 10 minutes
 bash infra/05-deploy-on-vm.sh            # the same image + the MQTT pipeline on the VM
 bash infra/99-cleanup.sh                 # delete everything
 ```
