@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}BVG Late Note{% endblock %}</title>
+  <meta name="description" content="Real Berlin transport delays, turned into a note you can show.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Public+Sans:wght@400;700&display=swap">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/">Late Note</a>
+    <span class="tagline">Berlin transport delays, written down.</span>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="foot">
+    <p>Delay data from the public BVG/VBB timetable API, collected every 2 minutes by this app. Not affiliated with BVG. Student project for Cloud Computing, SRH Berlin. v{{ version }}</p>
+  </footer>
+</body>
+</html>

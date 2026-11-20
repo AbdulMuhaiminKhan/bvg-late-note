@@ -1,0 +1,21 @@
+# secrets: never commit these
+.env
+*.env
+!.env.example
+local.settings.json
+*.pem
+*.key
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# local databases
+*.db
+*.sqlite
+
+# azure functions build output
+function_app/latenote/
+function_app/.python_packages/

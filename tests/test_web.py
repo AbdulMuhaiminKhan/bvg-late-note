@@ -1,0 +1,59 @@
+from datetime import datetime, timezone
+
+import pytest
+from fastapi.testclient import TestClient
+
+from latenote import db
+from latenote.bvg import parse_departures
+from latenote.web import create_app
+
+
+@pytest.fixture
+def client(settings, engine, payload):
+    db.upsert_departures(engine, parse_departures(payload, "900100003"), now=datetime(2026, 11, 20, 8, tzinfo=timezone.utc))
+    return TestClient(create_app(settings))
+
+
+def test_home_shows_form_and_stops(client):
+    r = client.get("/")
+    assert r.status_code == 200
+    assert "Which train made you late?" in r.text
+    assert "S+U Alexanderplatz" in r.text
+    assert r.headers["x-frame-options"] == "DENY"
+
+
+def test_find_then_make_note_then_view(client):
+    r = client.get("/find", params={"line": "U8", "stop": "900100003", "date": "2026-11-20", "time": "09:00"})
+    assert r.status_code == 200
+    assert "+12 min" in r.text
+
+    dep_id = r.text.split('name="departure_id" value="')[1].split('"')[0]
+    r = client.post("/notes", data={"departure_id": dep_id}, follow_redirects=False)
+    assert r.status_code == 303
+    note_url = r.headers["location"]
+
+    r = client.get(note_url)
+    assert r.status_code == 200
+    assert "+12" in r.text
+    assert "09:04" in r.text and "09:16" in r.text  # Berlin time, not UTC
+    assert "https://latenote.example" + note_url in r.text
+
+
+def test_cancelled_trip_is_shown(client):
+    r = client.get("/find", params={"line": "m4", "stop": "900100003", "date": "2026-11-20", "time": "09:10"})
+    assert "Cancelled" in r.text
+
+
+def test_bad_input_gives_clear_errors(client):
+    assert client.get("/find", params={"line": "U8", "stop": "123", "date": "2026-11-20", "time": "09:00"}).status_code == 400
+    assert client.get("/find", params={"line": "U8", "stop": "900100003", "date": "20.11.", "time": "9"}).status_code == 400
+    assert client.post("/notes", data={"departure_id": "999999"}).status_code == 404
+    r = client.get("/n/doesnotexist")
+    assert r.status_code == 404 and "No note with this code" in r.text
+
+
+def test_board_and_health(client):
+    assert client.get("/board/900100003").status_code == 200
+    assert client.get("/board/1").status_code == 404
+    h = client.get("/healthz").json()
+    assert h["status"] == "ok" and h["departures"] == 3

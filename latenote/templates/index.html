@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Which train made you late?</h1>
+  <p class="lead">Tell us the line, the stop and when you were there. We look it up in the delays we recorded and give you a note with a link anyone can check.</p>
+
+  <form class="finder" action="/find" method="get">
+    <label>Line
+      <input name="line" required placeholder="U8" autocomplete="off" maxlength="10">
+    </label>
+    <label class="wide">Stop
+      <select name="stop" required>
+        {% for id, name in stops.items() %}<option value="{{ id }}">{{ name }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Date
+      <input type="date" name="date" required value="{{ today }}">
+    </label>
+    <label>Time
+      <input type="time" name="time" required value="{{ time_now }}">
+    </label>
+    <button type="submit">Find my train</button>
+  </form>
+
+  <p class="fresh">
+    {% if stats.last_collected %}Last check {{ ago(stats.last_collected) }}. {{ "{:,}".format(stats.departures) }} departures recorded, {{ stats.notes }} notes written.
+    {% else %}No delays recorded yet. The collector checks every 2 minutes; come back shortly.{% endif %}
+  </p>
+</section>
+
+<section class="shame" aria-labelledby="shame-h">
+  <h2 id="shame-h">Hall of Shame</h2>
+  <p class="sub">Share of departures at least 3 minutes late or cancelled, last 7 days, at the stops we watch.</p>
+  {% if shame %}
+  <table class="bars">
+    <thead><tr><th scope="col">Line</th><th scope="col">Late or cancelled</th><th scope="col" class="num">Average delay</th><th scope="col" class="num">Worst</th></tr></thead>
+    <tbody>
+    {% for r in shame %}
+      {% set pct = (r.late_share * 100) | round | int %}
+      <tr title="{{ r.line }}: {{ r.late + r.cancelled }} of {{ r.total }} departures late or cancelled">
+        <td>{% with line=r.line, product=r.product %}{% include "_badge.html" %}{% endwith %}</td>
+        <td class="barcell"><svg class="bar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="0" width="{{ [pct, 1] | max }}" height="10" rx="1.5"></rect></svg><span class="val">{{ pct }}%</span></td>
+        <td class="num">{{ "%.1f" | format(r.avg_delay_s / 60) }} min</td>
+        <td class="num">{{ minutes(r.worst_delay_s) or 0 }} min</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">Not enough data yet. Each line needs at least 5 recorded departures.</p>
+  {% endif %}
+</section>
+
+<section class="boards" aria-labelledby="boards-h">
+  <h2 id="boards-h">Stops we watch</h2>
+  <ul>
+    {% for id, name in stops.items() %}<li><a href="/board/{{ id }}">{{ name }}</a></li>{% endfor %}
+  </ul>
+</section>
+{% endblock %}

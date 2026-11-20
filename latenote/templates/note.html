@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Late note: {{ n.line }} {{ hhmm(n.planned_when) }} · BVG Late Note{% endblock %}
+{% block content %}
+{% set m = minutes(n.max_delay_s if n.max_delay_s is not none else n.delay_s) %}
+<article class="slip" aria-label="Late note">
+  <header class="slip-head">
+    <p class="slip-kind">Late note</p>
+    <p class="slip-no">No. {{ n.note_id }}</p>
+  </header>
+  <p class="slip-line">{% with line=n.line, product=n.product %}{% include "_badge.html" %}{% endwith %} to {{ n.direction }}</p>
+  <dl class="slip-facts">
+    <div><dt>Stop</dt><dd>{{ n.stop_name }}</dd></div>
+    <div><dt>Date</dt><dd>{{ day(n.planned_when) }}</dd></div>
+    <div><dt>Planned</dt><dd>{{ hhmm(n.planned_when) }}</dd></div>
+    <div><dt>Left</dt><dd>{% if n.cancelled %}did not run{% else %}{{ hhmm(n.actual_when) }}{% endif %}</dd></div>
+  </dl>
+  <p class="stamp {% if n.cancelled %}stamp-cancel{% endif %}" aria-label="{% if n.cancelled %}Cancelled{% else %}{{ m or 0 }} minutes late{% endif %}">
+    {% if n.cancelled %}Cancelled{% else %}+{{ m or 0 }}<small>min</small>{% endif %}
+  </p>
+  <p class="slip-proof">Recorded from the public BVG timetable data at {{ hhmm(n.last_seen) }}, not typed in by the person showing you this. Check it at <a href="{{ link }}">{{ link }}</a></p>
+</article>
+<p class="after"><a href="/">Make another note</a></p>
+{% endblock %}

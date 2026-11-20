@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ stop_name }} · BVG Late Note{% endblock %}
+{% block content %}
+<section class="board">
+  <h1>{{ stop_name }}</h1>
+  <p class="lead">What we recorded here from 10 minutes ago to 20 minutes ahead. Read from our database, refreshed by the collector every 2 minutes.</p>
+  {% if rows %}
+  <table class="deps">
+    <thead><tr><th scope="col">Line</th><th scope="col">To</th><th scope="col">Planned</th><th scope="col" class="num">Delay</th></tr></thead>
+    <tbody>
+    {% for d in rows %}
+    <tr>
+      <td>{% with line=d.line, product=d.product %}{% include "_badge.html" %}{% endwith %}</td>
+      <td>{{ d.direction }}</td>
+      <td>{{ hhmm(d.planned_when) }}</td>
+      <td class="num {% if d.cancelled %}is-cancelled{% elif (d.delay_s or 0) >= 180 %}is-late{% endif %}">{% if d.cancelled %}cancelled{% elif d.delay_s is none %}–{% else %}{{ "+%d" | format(minutes(d.delay_s)) }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">Nothing recorded for this window yet. Is the collector running?</p>
+  {% endif %}
+  <p><a href="/">Back</a></p>
+</section>
+{% endblock %}

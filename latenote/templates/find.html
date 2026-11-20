@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ line }} at {{ stop_name }} · BVG Late Note{% endblock %}
+{% block content %}
+<section class="results">
+  <h1>{{ line | upper }} at {{ stop_name }}</h1>
+  <p class="lead">Departures within 30 minutes of {{ when.strftime("%H:%M") }} on {{ when.strftime("%a %d %b") }}.</p>
+  {% if found %}
+  <ol class="trips">
+    {% for d in found %}
+    <li class="trip">
+      {% with line=d.line, product=d.product %}{% include "_badge.html" %}{% endwith %}
+      <span class="dir">to {{ d.direction }}</span>
+      <span class="times">planned {{ hhmm(d.planned_when) }}{% if d.actual_when %}, left {{ hhmm(d.actual_when) }}{% endif %}</span>
+      <span class="delay {% if d.cancelled %}is-cancelled{% elif (d.delay_s or 0) >= 180 %}is-late{% endif %}">
+        {% if d.cancelled %}Cancelled{% elif d.delay_s is none %}No live data{% elif d.delay_s < 60 %}On time{% else %}+{{ minutes(d.delay_s) }} min{% endif %}
+      </span>
+      <form action="/notes" method="post">
+        <input type="hidden" name="departure_id" value="{{ d.id }}">
+        <button type="submit">Make a note</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}
+  <p class="empty">We have no {{ line | upper }} departures at {{ stop_name }} around that time. Check the line name (for example U8, M41, S42) or try another time. We only know about trips since the collector started.</p>
+  {% endif %}
+  <p><a href="/">Search again</a></p>
+</section>
+{% endblock %}
