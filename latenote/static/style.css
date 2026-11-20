@@ -54,6 +54,7 @@ section + section { border-top: 1px solid var(--rule); }
 .finder { display: grid; grid-template-columns: 6rem minmax(0, 1fr) 10rem 7.5rem; gap: 0.75rem; align-items: end; }
 .finder label { display: grid; gap: 0.3rem; font-size: 0.9rem; color: var(--ink-2); }
 input, select, button { font: inherit; color: var(--ink); }
+input::placeholder { color: var(--ink-2); opacity: 1; }
 input, select {
   width: 100%; padding: 0.6rem 0.65rem; border: 1px solid var(--rule); border-radius: 6px; background: var(--card);
 }
@@ -75,7 +76,7 @@ button:hover { background: var(--bar); }
 .p-suburban { background: #00843d; }
 .p-tram { background: #be1414; }
 .p-bus { background: #7b2a73; }
-.p-ferry { background: #0080ba; }
+.p-ferry { background: #006c9e; }
 
 /* hall of shame: one series, so one bar colour and no legend */
 table { width: 100%; border-collapse: collapse; }
