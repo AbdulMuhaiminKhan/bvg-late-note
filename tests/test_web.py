@@ -86,3 +86,20 @@ def test_cancelled_note_message_says_cancelled(client):
     note_url = client.post("/notes", data={"departure_id": dep_id}, follow_redirects=False).headers["location"]
     r = client.get(note_url)
     assert "was cancelled. Here is the BVG record:" in r.text
+
+
+def test_late_message_wording():
+    from datetime import datetime, timezone
+    from latenote.web import late_message
+
+    base = {
+        "product": "bus", "line": "M41", "direction": "Sonnenallee/Baumschulenstr.",
+        "stop_name": "S Sonnenallee", "cancelled": False,
+        "planned_when": datetime(2026, 11, 20, 8, 0, tzinfo=timezone.utc),
+        "actual_when": datetime(2026, 11, 20, 8, 1, tzinfo=timezone.utc),
+    }
+    on_time = late_message({**base, "delay_s": 0, "max_delay_s": 0}, "L")
+    assert on_time.startswith("For the record: my Bus M41") and "left on time at 09:00" in on_time
+    assert "0 minutes" not in on_time
+    one = late_message({**base, "delay_s": 60, "max_delay_s": 60}, "L")
+    assert "was 1 minute late" in one

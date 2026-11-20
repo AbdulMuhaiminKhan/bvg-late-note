@@ -51,8 +51,16 @@ def late_message(note: dict, link: str) -> str:
         what = f"my {train} to {note['direction']} from {note['stop_name']} ({when}) was cancelled"
     else:
         m = minutes(note["max_delay_s"] if note["max_delay_s"] is not None else note["delay_s"]) or 0
+        trip = f"my {train} to {note['direction']} from {note['stop_name']}"
+        if m <= 0:
+            # Honest even when the train was on time: the note records it, it does not excuse it.
+            return (
+                f"For the record: {trip} left on time at {hhmm(note['planned_when'])} "
+                f"({day(note['planned_when'])}). Here is the BVG record: {link}"
+            )
+        unit = "minute" if m == 1 else "minutes"
         what = (
-            f"my {train} to {note['direction']} from {note['stop_name']} was {m} minutes late "
+            f"{trip} was {m} {unit} late "
             f"(planned {hhmm(note['planned_when'])}, left {hhmm(note['actual_when'])}, {day(note['planned_when'])})"
         )
     return f"Sorry, I'm running late: {what}. Here is the BVG record: {link}"
