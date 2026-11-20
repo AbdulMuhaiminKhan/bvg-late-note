@@ -7,28 +7,29 @@ set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ ! -f "$HERE/.names.env" ]]; then
-  echo "SUFFIX=$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 5)" > "$HERE/.names.env"
+  echo "SUFFIX=$(head -c 300 /dev/urandom | LC_ALL=C tr -dc 'a-z0-9' | cut -c1-5)" > "$HERE/.names.env"
 fi
 # shellcheck disable=SC1091
 source "$HERE/.names.env"
 
-# Azure for Students only allows some regions. If you get a "RequestDisallowedByPolicy"
-# error, run: export LOCATION=swedencentral   (or westeurope) and try again.
-LOCATION="${LOCATION:-germanywestcentral}"
+# Azure for Students only allows some regions (here: swedencentral, germanywestcentral,
+# italynorth, austriaeast, denmarkeast). Sweden Central is the one that offers the
+# free-tier VM size (B2ats_v2) to this subscription, so everything runs there.
+LOCATION="${LOCATION:-swedencentral}"
 RG="${RG:-rg-latenote}"
 
 VNET="vnet-latenote"
 SUBNET="snet-app"
 NSG="nsg-latenote"
 VM="vm-latenote"
+VM_SIZE="Standard_B2ats_v2"   # the size covered by the free 750 VM hours a month
 PG="pg-latenote-$SUFFIX"
 PG_ADMIN="latenoteadmin"
 PG_DB="latenote"
 KV="kv-latenote-$SUFFIX"
-ST="stlatenote$SUFFIX"
-FUNC="func-latenote-$SUFFIX"
 CAE="cae-latenote"
 CA="ca-latenote"
+JOB="job-collector"
 IMAGE="${IMAGE:-ghcr.io/abdulmuhaiminkhan/bvg-late-note:latest}"
 
 my_ip() { curl -fsS https://api.ipify.org; }

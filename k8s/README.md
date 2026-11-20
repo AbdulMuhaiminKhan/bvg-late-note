@@ -1,6 +1,6 @@
 # Optional: the same system on a small Kubernetes cluster
 
-The cloud deployment uses **Azure Container Apps** (see `infra/04-container-apps.sh`),
+The cloud deployment uses **Azure Container Apps** (see `infra/03-container-apps.sh`),
 a managed service that runs on Kubernetes for us. These manifests show the same
 setup on a local cluster (minikube or kind), to compare the two.
 

@@ -1,7 +1,8 @@
 """The collector: asks the BVG API about every watched stop and stores the result.
 
-In Azure this runs inside an Azure Function with a timer trigger
-(function_app/function_app.py). Locally, `python -m latenote.collector --loop`
+In Azure this runs as a scheduled Container Apps job every 2 minutes
+(infra/04-collector-job.sh); function_app/ has the same thing as an Azure Function.
+Locally, `python -m latenote.collector --loop`
 does the same job in a container, so docker compose mirrors the cloud setup.
 """
 

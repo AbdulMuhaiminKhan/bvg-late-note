@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Step 4 (building block: orchestration).
+# Step 3 (building block: orchestration).
 # The web app on Azure Container Apps: a managed container service (built on
 # Kubernetes) that gives HTTPS, scaling from 0 to 3 replicas and rolling
 # updates, without a cluster to pay for or patch.
@@ -7,9 +7,14 @@ source "$(dirname "$0")/config.sh"
 
 az extension add --name containerapp --upgrade -o none
 az provider register --namespace Microsoft.App --wait
-az provider register --namespace Microsoft.OperationalInsights --wait
 
-az containerapp env create -g "$RG" -n "$CAE" -l "$LOCATION" -o none
+# --logs-destination none: no Log Analytics workspace, which would not be free.
+# Logs are still visible live with `az containerapp logs show`.
+# --environment-mode WorkloadProfiles: the newer default ("Express") does not
+# support Key Vault references. Only the built-in Consumption profile is used,
+# which is what the monthly free grant covers.
+az containerapp env create -g "$RG" -n "$CAE" -l "$LOCATION" --logs-destination none \
+  --environment-mode WorkloadProfiles -o none
 
 az containerapp create -g "$RG" -n "$CA" --environment "$CAE" \
   --image "$IMAGE" --target-port 8000 --ingress external \

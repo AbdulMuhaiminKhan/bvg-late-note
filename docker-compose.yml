@@ -2,6 +2,10 @@
 #   db        - PostgreSQL; data lives in the named volume "pgdata", outside the containers
 #   collector - same job as the Azure Function: checks BVG every 2 minutes
 #   web       - the app users see, on http://localhost:8000
+# MQTT stage (optional): docker compose --profile mqtt up --build
+#   mqtt       - Mosquitto broker, login required, only reachable from this machine
+#   sensor     - the "virtual sensor": publishes BVG departures to bvg/departures/<stop>
+#   subscriber - reads bvg/departures/# and writes to the database
 services:
   db:
     image: postgres:16-alpine
@@ -37,6 +41,45 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    profiles: [mqtt]
+    # The password file is generated at start from MQTT_PASSWORD (.env), never committed.
+    entrypoint: ["sh", "-c", "mosquitto_passwd -b -c /mosquitto/data/passwd latenote \"$$MQTT_PASSWORD\" && chown mosquitto:mosquitto /mosquitto/data/passwd && chmod 600 /mosquitto/data/passwd && exec mosquitto -c /mosquitto/config/mosquitto.conf"]
+    environment:
+      MQTT_PASSWORD: ${MQTT_PASSWORD:?set MQTT_PASSWORD in .env for the mqtt profile}
+    volumes:
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    ports:
+      - "127.0.0.1:1883:1883"
+    restart: unless-stopped
+
+  sensor:
+    build: .
+    profiles: [mqtt]
+    command: ["python", "-m", "latenote.sensor", "--loop", "--interval", "120"]
+    environment: &mqtt-env
+      <<: *app-env
+      MQTT_HOST: mqtt
+      MQTT_USERNAME: latenote
+      MQTT_PASSWORD: ${MQTT_PASSWORD:-}
+    healthcheck: { disable: true }
+    depends_on: [mqtt]
+    restart: unless-stopped
+
+  subscriber:
+    build: .
+    profiles: [mqtt]
+    command: ["python", "-m", "latenote.subscriber"]
+    environment: *mqtt-env
+    healthcheck: { disable: true }
+    depends_on:
+      mqtt:
+        condition: service_started
       db:
         condition: service_healthy
     restart: unless-stopped

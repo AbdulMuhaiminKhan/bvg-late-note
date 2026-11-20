@@ -1,0 +1,53 @@
+# LOCAL USE ONLY: PostgreSQL 16 inside the cluster, for the OrbStack/minikube demo.
+# In Azure the database is the managed PostgreSQL Flexible Server instead.
+# The password comes from the Secret "latenote-pg", created by hand with kubectl
+# (see k8s/README.md). It is never committed.
+apiVersion: v1
+kind: Service
+metadata:
+  name: latenote-db
+  labels: { app: latenote, part: db }
+spec:
+  type: ClusterIP
+  selector: { app: latenote, part: db }
+  ports: [{ port: 5432, targetPort: 5432 }]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: latenote-db
+  labels: { app: latenote, part: db }
+spec:
+  serviceName: latenote-db
+  replicas: 1
+  selector:
+    matchLabels: { app: latenote, part: db }
+  template:
+    metadata:
+      labels: { app: latenote, part: db }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports: [{ containerPort: 5432 }]
+          env:
+            - { name: POSTGRES_DB, value: latenote }
+            - { name: POSTGRES_USER, value: latenote }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: latenote-pg, key: POSTGRES_PASSWORD } }
+            - { name: PGDATA, value: /var/lib/postgresql/data/pgdata }
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql/data }
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 512Mi }
+          readinessProbe:
+            exec: { command: ["pg_isready", "-U", "latenote", "-d", "latenote"] }
+            periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests: { storage: 1Gi }

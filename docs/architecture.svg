@@ -3,10 +3,10 @@
 <style>.t{font-size:16px;font-weight:700;fill:#17212b}.s{font-size:12px;fill:#4b5866}.l{font-size:12px;fill:#17212b;font-weight:700}.g{font-size:13px;fill:#005a9e;font-weight:700}</style></defs>
 <rect width="1000" height="560" fill="#ffffff"/>
 <rect x="250" y="20" width="560" height="500" rx="12" fill="#f4f6f8" stroke="#0078d4" stroke-width="1.5" stroke-dasharray="8 6"/>
-<text x="266" y="44" class="g">Azure: resource group rg-latenote</text>
+<text x="266" y="44" class="g">Azure (Sweden Central): resource group rg-latenote</text>
 <rect x="270" y="330" width="250" height="170" rx="10" fill="#eef4fb" stroke="#0078d4" stroke-width="1"/>
 <text x="282" y="350" class="s">VNet 10.10.0.0/16, subnet 10.10.1.0/24</text>
-<text x="282" y="366" class="s">Firewall: SSH only from my IP, HTTP open</text>
+<text x="282" y="366" class="s">No public IP; NSG: 80/8000/1883 VNet-only</text>
 <rect x="20" y="240" width="180" height="90" rx="8" fill="#ffffff" stroke="#17212b" stroke-width="1.5"/>
 <text x="110.0" y="279.0" text-anchor="middle" class="t">Student's phone</text>
 <text x="110.0" y="299.0" text-anchor="middle" class="s">or any browser</text>
@@ -16,15 +16,15 @@
 <text x="395.0" y="145.0" text-anchor="middle" class="s">HTTPS, scales to zero</text>
 <rect x="290" y="205" width="210" height="80" rx="8" fill="#ffffff" stroke="#17212b" stroke-width="1.5"/>
 <text x="395.0" y="239.0" text-anchor="middle" class="t">Key Vault</text>
-<text x="395.0" y="259.0" text-anchor="middle" class="s">database-url secret</text>
-<text x="395.0" y="275.0" text-anchor="middle" class="s">for the Function and web app</text>
+<text x="395.0" y="259.0" text-anchor="middle" class="s">database-url, mqtt-password</text>
+<text x="395.0" y="275.0" text-anchor="middle" class="s">for the job, web app and VM</text>
 <rect x="290" y="390" width="210" height="90" rx="8" fill="#ffffff" stroke="#17212b" stroke-width="1.5"/>
-<text x="395.0" y="429.0" text-anchor="middle" class="t">VM Standard_B1s</text>
-<text x="395.0" y="449.0" text-anchor="middle" class="s">Ubuntu + Docker</text>
-<text x="395.0" y="465.0" text-anchor="middle" class="s">same image (IaaS)</text>
+<text x="395.0" y="429.0" text-anchor="middle" class="t">VM B2ats_v2, private only</text>
+<text x="395.0" y="449.0" text-anchor="middle" class="s">sensor → MQTT → subscriber</text>
+<text x="395.0" y="465.0" text-anchor="middle" class="s">Mosquitto + web app (IaaS)</text>
 <rect x="580" y="70" width="210" height="90" rx="8" fill="#ffffff" stroke="#17212b" stroke-width="1.5"/>
-<text x="685.0" y="109.0" text-anchor="middle" class="t">Azure Function</text>
-<text x="685.0" y="129.0" text-anchor="middle" class="s">collector, timer trigger</text>
+<text x="685.0" y="109.0" text-anchor="middle" class="t">Container Apps job</text>
+<text x="685.0" y="129.0" text-anchor="middle" class="s">collector, cron schedule</text>
 <text x="685.0" y="145.0" text-anchor="middle" class="s">every 2 minutes</text>
 <rect x="580" y="250" width="210" height="90" rx="8" fill="#ffffff" stroke="#17212b" stroke-width="1.5"/>
 <text x="685.0" y="289.0" text-anchor="middle" class="t">PostgreSQL</text>
@@ -40,8 +40,6 @@
 <text x="110.0" y="490.0" text-anchor="middle" class="s">to ghcr.io</text>
 <line x1="200" y1="265" x2="288" y2="130" stroke="#4b5866" stroke-width="1.6" marker-end="url(#a)"/>
 <text x="232" y="186" text-anchor="middle" class="l">HTTPS</text>
-<line x1="200" y1="305" x2="288" y2="420" stroke="#4b5866" stroke-width="1.6" marker-end="url(#a)"/>
-<text x="232" y="372" text-anchor="middle" class="l">HTTP</text>
 <line x1="200" y1="465" x2="288" y2="455" stroke="#4b5866" stroke-width="1.6" marker-end="url(#a)"/>
 <text x="244" y="478" text-anchor="middle" class="l">pulls image</text>
 <line x1="790" y1="115" x2="838" y2="115" stroke="#4b5866" stroke-width="1.6" marker-end="url(#a)"/>
@@ -51,8 +49,8 @@
 <line x1="500" y1="135" x2="578" y2="275" stroke="#4b5866" stroke-width="1.6" marker-end="url(#a)"/>
 <text x="548" y="190" text-anchor="start" class="l">reads</text>
 <line x1="500" y1="430" x2="578" y2="320" stroke="#4b5866" stroke-width="1.6" marker-end="url(#a)"/>
-<text x="548" y="392" text-anchor="start" class="l">reads</text>
+<text x="548" y="392" text-anchor="start" class="l">writes, reads</text>
 <line x1="395" y1="205" x2="395" y2="163" stroke="#4b5866" stroke-width="1.6" marker-end="url(#a)" stroke-dasharray="5 4"/>
 <text x="402" y="188" text-anchor="start" class="l">secret</text>
-<text x="980" y="545" text-anchor="end" class="s">Dashed boxes are outside Azure. Each Azure service reads the secret with its own managed identity.</text>
+<text x="980" y="545" text-anchor="end" class="s">Dashed boxes are outside Azure. Each Azure service reads the secret with its own managed identity. Every resource is on a free offer.</text>
 </svg>

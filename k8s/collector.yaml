@@ -1,4 +1,4 @@
-# Same job as the Azure Function: a CronJob every 2 minutes.
+# Same job as the Container Apps collector job in Azure: a CronJob every 2 minutes.
 apiVersion: batch/v1
 kind: CronJob
 metadata:
