@@ -195,6 +195,7 @@ Solo project: all work by Abdul Muhaimin Khan.
   - Problems fixed on the way: the PostgreSQL resource provider was not registered on the new subscription; newer `az` versions renamed the firewall-rule and database arguments; the new default Container Apps environment type ("Express") does not support Key Vault references; `tr </dev/urandom | head` died with SIGPIPE under `set -o pipefail`.
   - Added the **MQTT stage** from session 6: a virtual sensor publishes each departure to Mosquitto on the VM, a subscriber stores it.
   - CI now builds the image for amd64 and arm64, so it also runs on Apple-silicon laptops.
+  - Ran the `k8s/` manifests on a real local Kubernetes cluster (OrbStack): PostgreSQL as a StatefulSet with a volume, 2 web replicas behind a Service, the collector as a CronJob ([screenshot](docs/screenshots/k8s-orbstack-home.png)).
 
 ### Session 8 (23 Nov): security, cost, final check
 - **To do:** check the numbers in `docs/cost.md` against the portal, take the final screenshots.
