@@ -43,7 +43,7 @@ There are two secrets: the database connection string and the MQTT broker passwo
 - **The VM serves plain HTTP** on port 80, but only inside the VNet. Fine for the IaaS comparison, not for real users.
 - **No user accounts and no rate limiting**: anyone can create many notes.
 - **MQTT without TLS** inside the VNet: the login is sent in plain text on the private network. Fine for a private subnet, but a real IoT deployment would use port 8883 with TLS (or Azure IoT Hub / Event Grid MQTT).
-- **The database has a public endpoint.** The "allow Azure services" rule lets any Azure IP try to connect, including other customers' services; only the password and TLS stop them. Private networking (VNet integration and a private endpoint) would be safer but costs more and complicates the student setup.
+- **The database has a public endpoint.** The "allow Azure services" rule lets any Azure IP try to connect, including other customers' services; only the password and TLS stop them. Private networking (VNet integration and a private endpoint) would be safer but costs more than this free-tier setup allows.
 - **The BVG API is a free community service** with no guarantee: if it goes down, no new delays are recorded (old notes still work).
 - A note proves *the train* was late, not that *the person* was on it.
 
