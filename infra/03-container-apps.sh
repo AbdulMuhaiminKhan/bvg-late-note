@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Step 3 (building block: orchestration).
+# Step 3 (orchestration).
 # The web app on Azure Container Apps: a managed container service (built on
 # Kubernetes) that gives HTTPS, scaling from 0 to 3 replicas and rolling
 # updates, without a cluster to pay for or patch.

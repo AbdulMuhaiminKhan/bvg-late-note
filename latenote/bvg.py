@@ -13,7 +13,7 @@ from typing import Any
 
 import httpx
 
-USER_AGENT = "bvg-late-note (student cloud computing project)"
+USER_AGENT = "bvg-late-note (+https://github.com/AbdulMuhaiminKhan/bvg-late-note)"
 
 
 @dataclass(frozen=True)

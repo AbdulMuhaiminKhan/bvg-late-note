@@ -11,8 +11,7 @@ import os
 from dataclasses import dataclass, field
 
 # Default stops to watch. IDs come from the BVG API (/locations?query=...),
-# checked on 20 Nov 2026. The first two are next to SRH Campus Berlin
-# (Sonnenallee 221). Format: "id:Name,id:Name". Override with WATCHED_STOPS.
+# checked on 20 Nov 2026. The first two are on Sonnenallee in Neukölln. Format: "id:Name,id:Name". Override with WATCHED_STOPS.
 DEFAULT_WATCHED_STOPS = ",".join(
     [
         "900077106:S Sonnenallee",

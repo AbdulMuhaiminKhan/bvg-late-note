@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Step 4 (building block: managed, event-driven service).
+# Step 4 (managed, event-driven service).
 # The collector as a scheduled Azure Container Apps job: every 2 minutes Azure
 # starts one container from the same image, it calls the BVG API for the 7
 # watched stops, writes to PostgreSQL and exits. Billed per second of run time,

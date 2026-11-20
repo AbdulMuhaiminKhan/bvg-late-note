@@ -1,6 +1,6 @@
 # Local version of the whole system:
 #   db        - PostgreSQL; data lives in the named volume "pgdata", outside the containers
-#   collector - same job as the Azure Function: checks BVG every 2 minutes
+#   collector - same job as the Container Apps job in Azure: checks BVG every 2 minutes
 #   web       - the app users see, on http://localhost:8000
 # MQTT stage (optional): docker compose --profile mqtt up --build
 #   mqtt       - Mosquitto broker, login required, only reachable from this machine

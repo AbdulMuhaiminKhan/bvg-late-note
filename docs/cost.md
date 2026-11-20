@@ -1,6 +1,6 @@
 # Cost per month
 
-Goal: **€0**. Every resource is on a free offer of my Azure for Students
+Goal: **€0**. Every resource is on a free offer of my Azure
 subscription (checked on the portal's "Free services" page, 20 Nov 2026).
 Prices for the 10,000-user case are approximate list prices for Sweden Central,
 rounded; check them in the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/)

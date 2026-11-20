@@ -12,7 +12,7 @@ fi
 # shellcheck disable=SC1091
 source "$HERE/.names.env"
 
-# Azure for Students only allows some regions (here: swedencentral, germanywestcentral,
+# Some subscriptions only allow some regions (here: swedencentral, germanywestcentral,
 # italynorth, austriaeast, denmarkeast). Sweden Central is the one that offers the
 # free-tier VM size (B2ats_v2) to this subscription, so everything runs there.
 LOCATION="${LOCATION:-swedencentral}"

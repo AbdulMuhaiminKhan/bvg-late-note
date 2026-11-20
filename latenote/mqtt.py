@@ -1,4 +1,4 @@
-"""MQTT stage of the pipeline (course session 6: device -> broker -> cloud).
+"""MQTT stage of the pipeline (device -> broker -> cloud).
 
 The "virtual sensor" (latenote.sensor) watches BVG stops and publishes every
 departure it sees as one JSON message to the broker (Mosquitto). The subscriber

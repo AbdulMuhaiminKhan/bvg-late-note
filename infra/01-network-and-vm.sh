@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Step 1 (building block: virtual machine, network, firewall).
+# Step 1 (virtual machine, network, firewall).
 # A virtual network with one subnet, a network security group (the firewall)
 # and a small Ubuntu VM. Docker is installed on first boot by cloud-init.
 #

@@ -8,7 +8,7 @@
 <text x="282" y="350" class="s">VNet 10.10.0.0/16, subnet 10.10.1.0/24</text>
 <text x="282" y="366" class="s">No public IP; NSG: 80/8000/1883 VNet-only</text>
 <rect x="20" y="240" width="180" height="90" rx="8" fill="#ffffff" stroke="#17212b" stroke-width="1.5"/>
-<text x="110.0" y="279.0" text-anchor="middle" class="t">Student's phone</text>
+<text x="110.0" y="279.0" text-anchor="middle" class="t">User's phone</text>
 <text x="110.0" y="299.0" text-anchor="middle" class="s">or any browser</text>
 <rect x="290" y="70" width="210" height="90" rx="8" fill="#ffffff" stroke="#17212b" stroke-width="1.5"/>
 <text x="395.0" y="109.0" text-anchor="middle" class="t">Container Apps</text>

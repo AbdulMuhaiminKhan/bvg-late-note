@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Step 2 (building blocks: storage, managed service, secrets).
+# Step 2 (storage, managed service, secrets).
 # Managed PostgreSQL (Azure keeps it patched and backed up) and a Key Vault
 # that holds the only secret of the system: the database connection string.
 # The password is generated here, goes straight into Key Vault and is never

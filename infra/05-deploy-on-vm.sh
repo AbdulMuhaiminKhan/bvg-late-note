@@ -66,4 +66,4 @@ SH
 az vm run-command invoke -g "$RG" -n "$VM" --command-id RunShellScript --scripts "$SCRIPT" \
   --query "value[0].message" -o tsv
 echo "Running on the VM (private only, http://$(az vm show -d -g "$RG" -n "$VM" --query privateIps -o tsv) inside the VNet)."
-echo "Watch the MQTT messages: see docs/presentation.md (mosquitto_sub via run-command)."
+echo "Watch the MQTT messages: see docs/demo.md (mosquitto_sub via run-command)."

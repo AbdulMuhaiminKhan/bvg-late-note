@@ -5,7 +5,7 @@ source "$(dirname "$0")/config.sh"
 cat <<'MSG'
 Before you create anything: set a budget alert.
   Portal > Cost Management > Budgets > Add: €10 per month, e-mail at 50%, 80%, 100%.
-  On Azure for Students, if budgets are not offered, check the credit at
+  If budgets are not offered on your subscription, check the credit at
   https://www.microsoftazuresponsorships.com/balance instead.
 MSG
 read -r -p "Budget alert set (or credit checked)? [y/N] " ok
