@@ -47,7 +47,7 @@ and get a note with a link anyone can check.
 
 The design follows from one limit: the BVG API allows about **100 requests per
 minute**. So users never call BVG. Scheduled collectors call it (7 stops every
-2 minutes from the VM's MQTT sensor, every 10 from a Container Apps job: about 4 requests per minute) and stores everything in PostgreSQL.
+2 minutes from the VM's MQTT sensor, every 10 from a Container Apps job: about 4 requests per minute) and store everything in PostgreSQL.
 The web app only reads that database, so 10 or 10,000 users put exactly the
 same load on BVG.
 
