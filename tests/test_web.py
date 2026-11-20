@@ -63,3 +63,26 @@ def test_line_name_is_validated_and_escaped(client):
     assert client.get("/find", params={"line": "x" * 50, "stop": "900100003", "date": "2026-11-20", "time": "09:00"}).status_code == 400
     r = client.get("/find", params={"line": "<b>U8", "stop": "900100003", "date": "2026-11-20", "time": "09:00"})
     assert "<b>U8" not in r.text and "&lt;B&gt;U8" in r.text
+
+
+def test_note_has_a_ready_to_send_message(client):
+    r = client.get("/find", params={"line": "U8", "stop": "900100003", "date": "2026-11-20", "time": "09:00"})
+    dep_id = r.text.split('name="departure_id" value="')[1].split('"')[0]
+    note_url = client.post("/notes", data={"departure_id": dep_id}, follow_redirects=False).headers["location"]
+
+    r = client.get(note_url)
+    link = "https://latenote.example" + note_url
+    assert "Sorry, I&#39;m running late: my U-Bahn U8" in r.text
+    assert "was 12 minutes late (planned 09:04, left 09:16" in r.text
+    assert "Here is the BVG record: " + link in r.text
+    assert "https://wa.me/?text=Sorry%2C%20I%27m%20running%20late" in r.text
+    assert '<script src="/static/share.js" defer></script>' in r.text
+    assert client.get("/static/share.js").status_code == 200
+
+
+def test_cancelled_note_message_says_cancelled(client):
+    r = client.get("/find", params={"line": "m4", "stop": "900100003", "date": "2026-11-20", "time": "09:10"})
+    dep_id = r.text.split('name="departure_id" value="')[1].split('"')[0]
+    note_url = client.post("/notes", data={"departure_id": dep_id}, follow_redirects=False).headers["location"]
+    r = client.get(note_url)
+    assert "was cancelled. Here is the BVG record:" in r.text

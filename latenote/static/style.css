@@ -156,3 +156,19 @@ td.is-late, td.is-cancelled { font-weight: 700; }
   .top, .foot, .after { display: none; }
   .slip { box-shadow: none; -webkit-mask: none; mask: none; border: 1px solid #999; }
 }
+
+/* the ready-to-send message under a note */
+.send { max-width: 34rem; margin: 2rem 0 1.5rem; }
+.send h2 { margin: 0 0 0.25rem; font: 700 1.6rem/1.1 var(--display); }
+.send-hint { margin: 0 0 0.75rem; color: var(--ink-2); font-size: 0.95rem; }
+.send textarea {
+  width: 100%; box-sizing: border-box; padding: 0.7rem 0.75rem; font: inherit; line-height: 1.45;
+  color: var(--ink); background: var(--card); border: 1px solid var(--rule); border-radius: 6px; resize: vertical;
+}
+.send-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; margin-top: 0.75rem; }
+.send-actions button.secondary { background: transparent; color: var(--ink); border: 2px solid var(--ink); padding: calc(0.7rem - 2px) 1rem; }
+.send-actions button.secondary:hover { background: var(--card); }
+.send-link { color: var(--ink); font-weight: 700; }
+.send-status { min-height: 1.4em; margin: 0.5rem 0 0; color: var(--ink-2); font-size: 0.9rem; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media print { .send { display: none; } }

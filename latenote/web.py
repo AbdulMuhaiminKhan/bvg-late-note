@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import quote
 from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, Form, HTTPException, Request
@@ -40,6 +41,21 @@ def hhmm(dt: datetime | None) -> str:
 
 def day(dt: datetime | None) -> str:
     return berlin(dt).strftime("%a %d %b %Y") if dt else "–"
+
+
+def late_message(note: dict, link: str) -> str:
+    """The text a user copies and sends: what happened, plus the link that proves it."""
+    train = f"{PRODUCT_NAMES.get(note['product'], '').strip()} {note['line']}".strip()
+    when = f"{day(note['planned_when'])}, {hhmm(note['planned_when'])}"
+    if note["cancelled"]:
+        what = f"my {train} to {note['direction']} from {note['stop_name']} ({when}) was cancelled"
+    else:
+        m = minutes(note["max_delay_s"] if note["max_delay_s"] is not None else note["delay_s"]) or 0
+        what = (
+            f"my {train} to {note['direction']} from {note['stop_name']} was {m} minutes late "
+            f"(planned {hhmm(note['planned_when'])}, left {hhmm(note['actual_when'])}, {day(note['planned_when'])})"
+        )
+    return f"Sorry, I'm running late: {what}. Here is the BVG record: {link}"
 
 
 def minutes(delay_s: int | None) -> int | None:
@@ -138,7 +154,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if note is None:
             raise HTTPException(404, "No note with this code. Check the link.")
         link = f"{settings.public_url.rstrip('/')}/n/{note_id}"
-        return templates.TemplateResponse(request, "note.html", {"n": note, "link": link})
+        message = late_message(note, link)
+        return templates.TemplateResponse(
+            request,
+            "note.html",
+            {"n": note, "link": link, "message": message, "message_q": quote(message)},
+        )
 
     @app.get("/board/{stop_id}", response_class=HTMLResponse)
     def board(request: Request, stop_id: str):

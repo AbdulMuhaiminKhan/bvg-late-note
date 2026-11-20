@@ -5,7 +5,8 @@
 "The U8 was 12 minutes late" is easy to say and hard to prove. BVG Late Note
 records real departures and delays from the public BVG timetable data every
 2 minutes. When you were late, you pick your line, stop and time, and get a
-note with a link anyone can check. A Hall of Shame shows which lines were late
+note with a link anyone can check, plus a ready-to-send "sorry, I'm late" message
+to copy or share (WhatsApp, email, SMS). A Hall of Shame shows which lines were late
 most often this week.
 
 Solo project by **Abdul Muhaimin Khan** for Cloud Computing (B.Sc. Computer
