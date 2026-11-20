@@ -35,10 +35,13 @@ kv() {
 umask 077
 DB_URL=\$(kv database-url); MQ_PW=\$(kv mqtt-password)
 printf 'DATABASE_URL=%s\nMQTT_HOST=mosquitto\nMQTT_USERNAME=latenote\nMQTT_PASSWORD=%s\n' "\$DB_URL" "\$MQ_PW" > /etc/latenote.env
-mkdir -p /etc/mosquitto-latenote
+mkdir -p /etc/mosquitto-latenote && rm -f /etc/mosquitto-latenote/passwd   # -c will not overwrite
 printf 'listener 1883\nallow_anonymous false\npassword_file /mosquitto/config/passwd\npersistence false\nlog_dest stdout\n' > /etc/mosquitto-latenote/mosquitto.conf
+# Mosquitto 2.1 runs as user "mosquitto" (uid 1883) and only accepts a password
+# file in a directory that this user owns. Directory 700, passwd (a hash) 600.
+chown -R 1883:1883 /etc/mosquitto-latenote && chmod 700 /etc/mosquitto-latenote
 docker run --rm -v /etc/mosquitto-latenote:/mosquitto/config eclipse-mosquitto:2 \
-  sh -c "mosquitto_passwd -b -c /mosquitto/config/passwd latenote '\$MQ_PW' && chown mosquitto:mosquitto /mosquitto/config/passwd && chmod 600 /mosquitto/config/passwd" >/dev/null 2>&1
+  sh -c "mosquitto_passwd -b -c /mosquitto/config/passwd latenote '\$MQ_PW' && chown mosquitto:mosquitto /mosquitto/config/passwd && chmod 600 /mosquitto/config/passwd" >/dev/null
 unset DB_URL MQ_PW TOKEN
 
 docker network create latenote-net >/dev/null 2>&1 || true
