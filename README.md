@@ -14,10 +14,12 @@ and get a note with a link anyone can check.
 
 **Live:** <https://ca-latenote.salmonstone-48436ce7.swedencentral.azurecontainerapps.io>
 
-<p>
-  <img src="docs/screenshots/live-note.png" alt="A late note from real data, with the ready-to-send message and Copy and Share buttons" width="49%">
-  <img src="docs/screenshots/live-home.png" alt="Home page with the search form and this week's Hall of Shame" width="49%">
-</p>
+<table>
+  <tr>
+    <td width="63%" valign="top"><img src="docs/screenshots/live-home.png" alt="Home page with the search form and this week's Hall of Shame"></td>
+    <td width="37%" valign="top"><img src="docs/screenshots/live-note-mobile.png" alt="A late note on a phone, with the ready-to-send message and Copy and Share buttons"></td>
+  </tr>
+</table>
 
 ## Features
 
