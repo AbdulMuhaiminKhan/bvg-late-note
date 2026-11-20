@@ -8,7 +8,7 @@
 | Me (admin) | SSH to the VM, psql to the database | NSG rule: port 22 only from my IP; database firewall rule for my IP |
 | The Function | the database and one Key Vault secret | its managed identity has only "Key Vault Secrets User" on this vault |
 | The Container App | the database and one Key Vault secret | same, with its own identity |
-| Everyone else | nothing else | NSG default deny; database only accepts Azure services and listed IPs |
+| Everyone else | nothing else | NSG default deny; database only accepts Azure IPs and listed IPs, and needs the password over TLS |
 
 ## Where the secrets live
 
@@ -24,7 +24,7 @@ There is exactly one secret: the database connection string.
 
 ## What is protected
 
-- Database not reachable from the internet except from my own IP.
+- Database not reachable from the internet except from my own IP and from Azure IPs (see below), always with TLS (`sslmode=require`).
 - SSH not open to the world.
 - HTTPS for the main app (Container Apps).
 - Container runs as a non-root user; secrets are not in the image.
@@ -36,7 +36,7 @@ There is exactly one secret: the database connection string.
 
 - **The VM serves plain HTTP** on port 80. Fine for the IaaS comparison, not for real users.
 - **No user accounts and no rate limiting**: anyone can create many notes.
-- **The database has a public endpoint** (locked down by firewall rules). Private networking (VNet integration and a private endpoint) would be safer but costs more and complicates the student setup.
+- **The database has a public endpoint.** The "allow Azure services" rule lets any Azure IP try to connect, including other customers' services; only the password and TLS stop them. Private networking (VNet integration and a private endpoint) would be safer but costs more and complicates the student setup.
 - **The BVG API is a free community service** with no guarantee: if it goes down, no new delays are recorded (old notes still work).
 - A note proves *the train* was late, not that *the person* was on it.
 

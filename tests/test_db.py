@@ -71,3 +71,12 @@ def test_delete_old_keeps_departures_with_notes(engine, payload):
     removed = db.delete_old(engine, older_than=datetime(2030, 1, 1, tzinfo=timezone.utc))
     assert removed == 2
     assert db.counts(engine)["departures"] == 1
+
+
+def test_reading_without_realtime_keeps_known_delay(engine, payload):
+    u8 = parse_departures(payload, "900100003")[1]
+    db.upsert_departures(engine, [u8], now=NOW)
+    db.upsert_departures(engine, [replace(u8, delay_s=None, when=u8.planned_when)], now=NOW + timedelta(minutes=2))
+    row = db.find_departures(engine, "U8", "900100003", u8.planned_when)[0]
+    assert row["delay_s"] == 720
+    assert row["actual_when"] == u8.when

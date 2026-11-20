@@ -57,3 +57,9 @@ def test_board_and_health(client):
     assert client.get("/board/1").status_code == 404
     h = client.get("/healthz").json()
     assert h["status"] == "ok" and h["departures"] == 3
+
+
+def test_line_name_is_validated_and_escaped(client):
+    assert client.get("/find", params={"line": "x" * 50, "stop": "900100003", "date": "2026-11-20", "time": "09:00"}).status_code == 400
+    r = client.get("/find", params={"line": "<b>U8", "stop": "900100003", "date": "2026-11-20", "time": "09:00"})
+    assert "<b>U8" not in r.text and "&lt;B&gt;U8" in r.text

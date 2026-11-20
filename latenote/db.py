@@ -107,12 +107,12 @@ def upsert_departures(engine: Engine, items: list[Departure], now: datetime | No
                     )
                 )
             ).first()
-            values = {
-                "actual_when": utc(d.when),
-                "delay_s": d.delay_s,
-                "cancelled": d.cancelled,
-                "last_seen": now,
-            }
+            values = {"cancelled": d.cancelled, "last_seen": now}
+            # The API often drops real-time data close to departure. A reading
+            # without a delay must not wipe out the delay we already know.
+            if d.delay_s is not None or d.cancelled or row is None:
+                values["actual_when"] = utc(d.when)
+                values["delay_s"] = d.delay_s
             if row is None:
                 conn.execute(
                     insert(departures).values(

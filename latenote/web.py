@@ -112,6 +112,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def find(request: Request, line: str, stop: str, date: str, time: str):
         if stop not in settings.watched_stops:
             raise HTTPException(400, "Pick one of the stops in the list.")
+        if not line.strip() or len(line) > 10:
+            raise HTTPException(400, "Enter a line name like U8, M41 or S42.")
         try:
             local = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M").replace(tzinfo=BERLIN)
         except ValueError:

@@ -141,7 +141,7 @@ Solo project: all work by Abdul Muhaimin Khan.
   - the Azure Function with a timer trigger;
   - Azure CLI scripts for the VM and firewall, PostgreSQL, Key Vault, the Function and Container Apps;
   - Kubernetes manifests for comparison;
-  - CI that runs 15 tests and publishes the image to ghcr.io.
+  - CI that runs the test suite and publishes the image to ghcr.io.
 - **Decisions:**
   - One image for the web app and the local collector, so local and cloud behave the same.
   - Key Vault and managed identities instead of connection strings in app settings.

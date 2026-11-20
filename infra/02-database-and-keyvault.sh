@@ -15,7 +15,10 @@ az postgres flexible-server create -g "$RG" -n "$PG" -l "$LOCATION" \
   --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 16 \
   --admin-user "$PG_ADMIN" --admin-password "$PG_PASSWORD" \
   --public-access 0.0.0.0 --yes -o none
-# --public-access 0.0.0.0 = only Azure services (our Function and Container App).
+# --public-access 0.0.0.0 adds the "allow Azure services" rule, so the Function
+# and Container App can connect. Note: it allows connections from ANY Azure IP,
+# including other customers' services; the password is the real protection.
+# A private endpoint would close this (see docs/security.md, "next").
 # Add my IP so I can inspect the data with psql:
 az postgres flexible-server firewall-rule create -g "$RG" -n "$PG" \
   --rule-name allow-admin-ip --start-ip-address "$IP" --end-ip-address "$IP" -o none
