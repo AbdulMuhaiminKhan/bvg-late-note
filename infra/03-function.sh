@@ -15,7 +15,7 @@ az storage account create -g "$RG" -n "$ST" -l "$LOCATION" --sku Standard_LRS \
 #   --consumption-plan-location "$LOCATION" --os-type Linux --functions-version 4 \
 az functionapp create -g "$RG" -n "$FUNC" --storage-account "$ST" \
   --flexconsumption-location "$LOCATION" \
-  --runtime python --runtime-version 3.11 -o none
+  --runtime python --runtime-version 3.11 --instance-memory 512 -o none
 
 PRINCIPAL="$(az functionapp identity assign -g "$RG" -n "$FUNC" --query principalId -o tsv)"
 KV_ID="$(az keyvault show -n "$KV" --query id -o tsv)"
