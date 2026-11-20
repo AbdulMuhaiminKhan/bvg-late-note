@@ -1,0 +1,45 @@
+# Local version of the whole system:
+#   db        - PostgreSQL; data lives in the named volume "pgdata", outside the containers
+#   collector - same job as the Azure Function: checks BVG every 2 minutes
+#   web       - the app users see, on http://localhost:8000
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: latenote
+      POSTGRES_USER: latenote
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?copy .env.example to .env and set POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U latenote -d latenote"]
+      interval: 5s
+      retries: 10
+    # no "ports:" on purpose: only the other containers can reach the database
+
+  collector:
+    build: .
+    command: ["python", "-m", "latenote.collector", "--loop", "--interval", "120"]
+    environment: &app-env
+      DATABASE_URL: postgresql://latenote:${POSTGRES_PASSWORD}@db:5432/latenote
+      WATCHED_STOPS: ${WATCHED_STOPS:-}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8000}
+    healthcheck:
+      disable: true  # the image's health check probes the web server, which this container doesn't run
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build: .
+    environment: *app-env
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:

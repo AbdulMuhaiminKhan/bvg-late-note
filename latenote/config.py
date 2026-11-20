@@ -46,7 +46,7 @@ class Settings:
         default_factory=lambda: os.getenv("BVG_BASE_URL", "https://v6.bvg.transport.rest")
     )
     watched_stops: dict[str, str] = field(
-        default_factory=lambda: _parse_stops(os.getenv("WATCHED_STOPS", DEFAULT_WATCHED_STOPS))
+        default_factory=lambda: _parse_stops(os.getenv("WATCHED_STOPS") or DEFAULT_WATCHED_STOPS)
     )
     # How far ahead each collector run looks, in minutes. The collector runs
     # every 2 minutes, so a 10 minute window sees every departure several
