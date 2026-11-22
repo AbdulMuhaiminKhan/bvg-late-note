@@ -6,7 +6,6 @@ az postgres flexible-server start -g "$RG" -n "$PG" -o none || true   # may alre
 az vm start -g "$RG" -n "$VM" -o none          # its containers restart by themselves (--restart unless-stopped)
 az containerapp job update -g "$RG" -n "$JOB" --cron-expression "*/10 * * * *" -o none
 LATEST="$(az containerapp show -g "$RG" -n "$CA" --query properties.latestRevisionName -o tsv)"
-az containerapp revision activate -g "$RG" -n "$CA" --revision "$LATEST" -o none
-az containerapp ingress traffic set -g "$RG" -n "$CA" --revision-weight latest=100 -o none
+az containerapp revision activate -g "$RG" -n "$CA" --revision "$LATEST" -o none 2>/dev/null || true   # may already be active
 FQDN="$(az containerapp show -g "$RG" -n "$CA" --query properties.configuration.ingress.fqdn -o tsv)"
 echo "Resumed. Check: curl https://$FQDN/healthz"

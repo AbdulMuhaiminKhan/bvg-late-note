@@ -14,6 +14,8 @@ and get a note with a link anyone can check.
 
 **Live:** <https://ca-latenote.salmonstone-48436ce7.swedencentral.azurecontainerapps.io>
 
+![Demo: find a late train, make a note, copy the message](docs/demo.gif)
+
 <table>
   <tr>
     <td width="63%" valign="top"><img src="docs/screenshots/live-home.png" alt="Home page with the search form and this week's Hall of Shame"></td>
