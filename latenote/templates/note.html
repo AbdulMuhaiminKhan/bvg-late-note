@@ -15,7 +15,7 @@
     <div><dt>Left</dt><dd>{% if n.cancelled %}did not run{% else %}{{ hhmm(n.actual_when) }}{% endif %}</dd></div>
   </dl>
   <p class="stamp {% if n.cancelled %}stamp-cancel{% endif %}" aria-label="{% if n.cancelled %}Cancelled{% else %}{{ m or 0 }} minutes late{% endif %}">
-    {% if n.cancelled %}Cancelled{% else %}+{{ m or 0 }}<small>min</small>{% endif %}
+    {% if n.cancelled %}Cancelled{% else %}+{{ [m or 0, 0] | max }}<small>min</small>{% endif %}
   </p>
   <p class="slip-proof">Recorded from the public BVG timetable data at {{ hhmm(n.last_seen) }}, not typed in by the person showing you this. Check it at <a href="{{ link }}">{{ link }}</a></p>
 </article>

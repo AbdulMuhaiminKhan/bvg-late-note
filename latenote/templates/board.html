@@ -13,7 +13,7 @@
       <td>{% with line=d.line, product=d.product %}{% include "_badge.html" %}{% endwith %}</td>
       <td>{{ d.direction }}</td>
       <td>{{ hhmm(d.planned_when) }}</td>
-      <td class="num {% if d.cancelled %}is-cancelled{% elif (d.delay_s or 0) >= 180 %}is-late{% endif %}">{% if d.cancelled %}cancelled{% elif d.delay_s is none %}–{% else %}{{ "+%d" | format(minutes(d.delay_s)) }}{% endif %}</td>
+      <td class="num {% if d.cancelled %}is-cancelled{% elif (d.delay_s or 0) >= 180 %}is-late{% endif %}">{% if d.cancelled %}cancelled{% elif d.delay_s is none %}–{% else %}{{ "%+d" | format(minutes(d.delay_s)) }}{% endif %}</td>
     </tr>
     {% endfor %}
     </tbody>
